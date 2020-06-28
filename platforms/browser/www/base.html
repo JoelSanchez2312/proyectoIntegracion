@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+        <script src="js/jquery-3.5.1.min.js"></script>
+        <script src="js/bootstrap.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+    
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+            integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
+        <link rel="stylesheet" href="./style.css" />
+    </head>
+    <body onload="table()">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+            <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">MAPA</a>
+            </li>  
+              <li class="nav-item active">
+                <a class="nav-link" href="base.html">HISTORIAL</a>
+              </li>
+            </ul>
+          </nav>
+          <div id="container">
+            <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">CITY</th>
+                    <th scope="col">COUNTRY</th>
+                    <th scope="col">WEATHER</th>
+                    <th scope="col">LONG</th>
+                    <th scope="col">LAT</th>
+                    <th scope="col">WIND</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody">
+      
+                </tbody>
+              </table>
+        </div>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4jT2zRaqmAQf-qDJ19HLGwN8AWWJg4qQ&libraries=visualization"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+    </body>
+</html>
