@@ -1,7 +1,82 @@
 var arregloPines = [];
 var heatmapData = [];
-var db = openDatabase("weatherDB","1.0","Example", 2 * 1024 * 1024);
+var db = openDatabase("weather1DB","1.0","Example", 2 * 1024 * 1024);
 
+function temp(){
+    nombre = $('#txtNombre').val();
+    alert(nombre);
+    var API_KEY = 'c39909d053b8a6c54dffd28ba28c8258';
+    var dir = "http://api.openweathermap.org/data/2.5/weather?q="+encodeURIComponent(nombre)+"&appid="+API_KEY;
+
+    $.ajax({
+        url:dir,
+        error:function(err){
+            alert("No hay coincidencias");
+            console.log(err);
+        },
+        beforeSend:function(){
+            $("#divCargando").show();            
+        }
+    }).done(function(data){
+        
+        $("#divCargando").hide();
+        console.log('Iniciar la busqueda');
+        const api = new XMLHttpRequest();
+        api.open('GET', dir, true)
+        api.send();
+        var clima;
+        var temperatura;
+        var coordenadas;    
+        api.onreadystatechange = function(){
+            if(this.readyState == 4 && this.status==200){
+                let datos = JSON.parse(this.responseText);
+                console.log(datos.name);                
+                $('#coord').html(" "+datos.coord.lon+" , "+datos.coord.lat);
+                coordenadas = " "+datos.coord.lon+" , "+ datos.coord.lat;
+                for(let item of datos.weather){
+                    $('#weather').html(" "+item.description);
+                    clima = item.description;                               
+                }                
+                $('#temp').html(" "+datos.main.temp);
+                temperatura = (datos.main.temp - 273.15);
+                $('#wind').html(" "+datos.wind.speed+" m/s");
+                
+                var pin = new google.maps.Marker({
+                    position: new google.maps.LatLng(datos.coord.lat,datos.coord.lon),
+                    map: map,
+                    title: datos.name
+                });
+
+                for(let item of datos.sys.country){
+                    var pin1 = new google.maps.LatLng(datos.coord.lat, datos.coord.lon);
+                    heatmapData.push(pin1);
+                }
+                
+                var texto = '<h4>'+'<p>'+'City: '+datos.name+'</p>'+'<p>'+'Country: '+datos.sys.country+'</p>'+'<p>'+'Coord: '+coordenadas+'</p>'+'<p>'+'Temperature: '+temperatura+' °C'+'</h4>';
+                var informacion = new google.maps.InfoWindow({
+                    content: texto
+                });
+
+                pin.addListener('click',function(){
+                    informacion.open(map,pin);
+                });
+
+                db.transaction(function(tx){
+                    tx.executeSql('INSERT INTO T_Map (city,country, weather, long, lat, wind) VALUES (?, ?, ?, ?, ?, ?)', [datos.name, datos.sys.country, temperatura,datos.coord.lon, datos.coord.lat,datos.wind.speed]);
+                });
+            
+                table();
+                var heatmap = new google.maps.visualization.HeatmapLayer({
+                    data: heatmapData
+                });
+                heatmap.setMap(map);
+                arregloPines.push(pin);                  
+            }           
+        } 
+        pin.setMap(null);       
+    });
+       
+}
 function consultar(){
     nombre = $('#txtNombre').val();
     alert(nombre);
@@ -52,7 +127,7 @@ function consultar(){
                     heatmapData.push(pin1);
                 }
                 
-                var texto = '<h4>'+'<p>'+'City: '+datos.name+'</p>'+'<p>'+'Country: '+datos.sys.country+'</p>'+'<p>'+'Coord: '+coordenadas+'</p>'+'Temperature: '+temperatura+' °C'+'</p>'+'<p>'+'Weather: '+clima+'</p>'+'<p>'+'Wind: '+datos.wind.speed+' m/s'+'</p>'+'</h4>';
+                var texto = '<h4>'+'<p>'+'City: '+datos.name+'</p>'+'<p>'+'Country: '+datos.sys.country+'</p>'+'<p>'+'Coord: '+coordenadas+'</p>'+'<p>'+'Weather: '+clima+'</p>'+'</h4>';
                 var informacion = new google.maps.InfoWindow({
                     content: texto
                 });
@@ -77,7 +152,81 @@ function consultar(){
     });
        
 }
+function wind(){
+    nombre = $('#txtNombre').val();
+    alert(nombre);
+    var API_KEY = 'c39909d053b8a6c54dffd28ba28c8258';
+    var dir = "http://api.openweathermap.org/data/2.5/weather?q="+encodeURIComponent(nombre)+"&appid="+API_KEY;
 
+    $.ajax({
+        url:dir,
+        error:function(err){
+            alert("No hay coincidencias");
+            console.log(err);
+        },
+        beforeSend:function(){
+            $("#divCargando").show();            
+        }
+    }).done(function(data){
+        
+        $("#divCargando").hide();
+        console.log('Iniciar la busqueda');
+        const api = new XMLHttpRequest();
+        api.open('GET', dir, true)
+        api.send();
+        var clima;
+        var temperatura;
+        var coordenadas;    
+        api.onreadystatechange = function(){
+            if(this.readyState == 4 && this.status==200){
+                let datos = JSON.parse(this.responseText);
+                console.log(datos.name);                
+                $('#coord').html(" "+datos.coord.lon+" , "+datos.coord.lat);
+                coordenadas = " "+datos.coord.lon+" , "+ datos.coord.lat;
+                for(let item of datos.weather){
+                    $('#weather').html(" "+item.description);
+                    clima = item.description;                               
+                }                
+                $('#temp').html(" "+datos.main.temp);
+                temperatura = (datos.main.temp - 273.15);
+                $('#wind').html(" "+datos.wind.speed+" m/s");
+                
+                var pin = new google.maps.Marker({
+                    position: new google.maps.LatLng(datos.coord.lat,datos.coord.lon),
+                    map: map,
+                    title: datos.name
+                });
+
+                for(let item of datos.sys.country){
+                    var pin1 = new google.maps.LatLng(datos.coord.lat, datos.coord.lon);
+                    heatmapData.push(pin1);
+                }
+                
+                var texto = '<h4>'+'<p>'+'City: '+datos.name+'</p>'+'<p>'+'Country: '+datos.sys.country+'</p>'+'<p>'+'Coord: '+coordenadas+'</p>'+'<p>'+'Wind: '+datos.wind.speed+' m/s'+'</p>'+'</h4>';
+                var informacion = new google.maps.InfoWindow({
+                    content: texto
+                });
+
+                pin.addListener('click',function(){
+                    informacion.open(map,pin);
+                });
+
+                db.transaction(function(tx){
+                    tx.executeSql('INSERT INTO T_Map (city,country, weather, long, lat, wind) VALUES (?, ?, ?, ?, ?, ?)', [datos.name, datos.sys.country, temperatura,datos.coord.lon, datos.coord.lat,datos.wind.speed]);
+                });
+            
+                table();
+                var heatmap = new google.maps.visualization.HeatmapLayer({
+                    data: heatmapData
+                });
+                heatmap.setMap(map);
+                arregloPines.push(pin);                  
+            }           
+        } 
+        pin.setMap(null);       
+    });
+       
+}
 function cargarMapa(){
 
     var myOptions = {
